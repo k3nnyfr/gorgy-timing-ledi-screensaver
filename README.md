@@ -3,6 +3,12 @@
 Écran de veille pour **Windows 10 et 11** qui reproduit l'affichage des horloges
 GORGY TIMING de la gamme LEDI.
 
+**[Dépôt](https://git.k3nny.fr/k3nny/gorgy-timing-ledi-screensaver)** · **[Versions](https://git.k3nny.fr/k3nny/gorgy-timing-ledi-screensaver/releases)** · Licence [MIT](LICENSE)
+
+> Le dépôt de référence est hébergé sur [git.k3nny.fr](https://git.k3nny.fr/k3nny/gorgy-timing-ledi-screensaver).
+> La copie GitHub en est une réplication automatique : les tickets et les versions
+> se trouvent sur git.k3nny.fr.
+
 ![Horloge LEDI](docs/screenshots/clock.png)
 
 C'est une réécriture en C# de l'écran de veille LEDI d'origine. L'ancien était un
