@@ -6,7 +6,7 @@ Unicode true
 SetCompressor /SOLID lzma
 
 !ifndef VERSION
-  !define VERSION "1.0.2"
+  !define VERSION "1.0.3"
 !endif
 !define PRODUCT     "GORGY TIMING LEDI"
 !define SCR_FILE    "GorgyLedi.scr"
