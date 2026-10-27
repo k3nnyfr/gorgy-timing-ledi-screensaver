@@ -1,0 +1,4 @@
+# Binaires générés par build.bat / build-installer.bat
+*.scr
+*.exe
+dist/

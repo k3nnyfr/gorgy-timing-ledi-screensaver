@@ -1,0 +1,6 @@
+# Scripts Windows en CRLF, scripts shell en LF, quel que soit le poste
+*.bat   text eol=crlf
+*.sh    text eol=lf
+*.yml   text eol=lf
+*.ico   binary
+*.png   binary

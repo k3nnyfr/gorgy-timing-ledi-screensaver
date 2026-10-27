@@ -1,0 +1,58 @@
+# Compile l'écran de veille et l'installeur sur un runner Linux (Mono + NSIS).
+# - push sur main / pull request : binaires disponibles en artefact
+# - tag vX.Y.Z : version X.Y.Z appliquée, binaires publiés dans une release Gitea
+name: Build
+
+on:
+  push:
+    branches: [main]
+    tags: ['v*']
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Installer Mono et NSIS
+        run: |
+          SUDO=$(command -v sudo || true)
+          $SUDO apt-get update -qq
+          $SUDO apt-get install -y -qq --no-install-recommends mono-devel nsis
+
+      - name: Déterminer la version
+        run: |
+          case "$GITHUB_REF" in
+            refs/tags/v*) VERSION="${GITHUB_REF#refs/tags/v}" ;;
+            *) VERSION=$(sed -n 's/.*!define VERSION "\(.*\)"/\1/p' installer/GorgyLedi.nsi) ;;
+          esac
+          if ! echo "$VERSION" | grep -Eq '^[0-9]+\.[0-9]+\.[0-9]+$'; then
+            echo "Version invalide : '$VERSION' (attendu : X.Y.Z, tag vX.Y.Z)" >&2
+            exit 1
+          fi
+          echo "VERSION=$VERSION" >> "$GITHUB_ENV"
+          sed -i "s/Version(\"[0-9.]*\")/Version(\"$VERSION.0\")/" src/AssemblyInfo.cs
+          echo "Version : $VERSION"
+
+      - name: Compiler l'écran de veille
+        run: ./build.sh
+
+      - name: Construire l'installeur
+        run: |
+          mkdir -p dist
+          makensis -V2 -DVERSION="$VERSION" installer/GorgyLedi.nsi
+          cp GorgyLedi.scr dist/
+
+      # Gitea ne prend pas en charge upload-artifact v4
+      - uses: actions/upload-artifact@v3
+        with:
+          name: GorgyLedi-${{ env.VERSION }}
+          path: dist/
+
+      - name: Publier la release
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: https://gitea.com/actions/release-action@main
+        with:
+          files: dist/*
+          api_key: '${{ secrets.GITHUB_TOKEN }}'
