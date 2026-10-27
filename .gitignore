@@ -2,4 +2,3 @@
 *.scr
 *.exe
 dist/
-.cache/

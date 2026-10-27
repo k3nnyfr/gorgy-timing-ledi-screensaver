@@ -73,11 +73,11 @@ ou le paquet `nsis` sous Linux). Le numéro de version se change à deux endroit
 `src/AssemblyInfo.cs`, et `VERSION` dans `installer/GorgyLedi.nsi` (ou
 `makensis -DVERSION=x.y.z`).
 
-`build.sh` compile avec `mcs` (paquet `mono-mcs`) en `-langversion:5`, donc une syntaxe
+`build.sh` compile avec `mcs` (paquet `mono-devel`) en `-langversion:5`, donc une syntaxe
 trop récente est aussi refusée par la CI. Il compile contre les **assemblys de référence
-officielles du .NET Framework 4.8** (paquet NuGet téléchargé une fois dans `.cache/`, empreinte
-vérifiée), et non contre les bibliothèques de Mono. Celles-ci contiennent des méthodes absentes
-du .NET Framework, qui feraient planter le `.scr` sous Windows (`MissingMethodException`).
+.NET Framework 4.8** fournies par Mono (`/usr/lib/mono/4.8-api`), et non contre ses
+bibliothèques d'exécution. Celles-ci contiennent des méthodes absentes du .NET Framework, qui
+feraient planter le `.scr` sous Windows (`MissingMethodException`). Le build ne télécharge rien.
 
 ### Intégration continue (Gitea Actions)
 

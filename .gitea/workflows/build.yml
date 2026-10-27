@@ -16,11 +16,11 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Installer Mono, NSIS et outils
+      - name: Installer Mono et NSIS
         run: |
           SUDO=$(command -v sudo || true)
           $SUDO apt-get update -qq
-          $SUDO apt-get install -y -qq --no-install-recommends mono-mcs nsis curl unzip ca-certificates
+          $SUDO apt-get install -y -qq --no-install-recommends mono-devel nsis
 
       - name: Déterminer la version
         run: |
