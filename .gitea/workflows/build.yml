@@ -1,6 +1,7 @@
 # Compile l'écran de veille et l'installeur sur un runner Linux (Mono + NSIS).
-# - push sur main / pull request : binaires disponibles en artefact
-# - tag vX.Y.Z : version X.Y.Z appliquée, binaires publiés dans une release Gitea
+# - push sur main / pull request : installeur disponible en artefact
+# - tag vX.Y.Z : version X.Y.Z appliquée, installeur publié dans une release Gitea
+# Le .scr n'est pas livré séparément : l'installeur le contient.
 name: Build
 
 on:
@@ -15,11 +16,11 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Installer Mono et NSIS
+      - name: Installer Mono, NSIS et outils
         run: |
           SUDO=$(command -v sudo || true)
           $SUDO apt-get update -qq
-          $SUDO apt-get install -y -qq --no-install-recommends mono-devel nsis
+          $SUDO apt-get install -y -qq --no-install-recommends mono-mcs nsis curl unzip ca-certificates
 
       - name: Déterminer la version
         run: |
@@ -42,17 +43,16 @@ jobs:
         run: |
           mkdir -p dist
           makensis -V2 -DVERSION="$VERSION" installer/GorgyLedi.nsi
-          cp GorgyLedi.scr dist/
 
       # Gitea ne prend pas en charge upload-artifact v4
       - uses: actions/upload-artifact@v3
         with:
-          name: GorgyLedi-${{ env.VERSION }}
-          path: dist/
+          name: GorgyLedi-Setup-${{ env.VERSION }}
+          path: dist/GorgyLedi-Setup-*.exe
 
       - name: Publier la release
         if: startsWith(github.ref, 'refs/tags/v')
         uses: https://gitea.com/actions/release-action@main
         with:
-          files: dist/*
+          files: dist/GorgyLedi-Setup-*.exe
           api_key: '${{ secrets.GITHUB_TOKEN }}'

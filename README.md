@@ -73,16 +73,18 @@ ou le paquet `nsis` sous Linux). Le numéro de version se change à deux endroit
 `src/AssemblyInfo.cs`, et `VERSION` dans `installer/GorgyLedi.nsi` (ou
 `makensis -DVERSION=x.y.z`).
 
-`build.sh` compile avec `mcs` (paquet `mono-devel`) en `-langversion:5`. Une erreur
-de syntaxe trop récente est donc aussi détectée par la CI. Le binaire produit tourne sur le
-.NET Framework de Windows.
+`build.sh` compile avec `mcs` (paquet `mono-mcs`) en `-langversion:5`, donc une syntaxe
+trop récente est aussi refusée par la CI. Il compile contre les **assemblys de référence
+officielles du .NET Framework 4.8** (paquet NuGet téléchargé une fois dans `.cache/`, empreinte
+vérifiée), et non contre les bibliothèques de Mono. Celles-ci contiennent des méthodes absentes
+du .NET Framework, qui feraient planter le `.scr` sous Windows (`MissingMethodException`).
 
 ### Intégration continue (Gitea Actions)
 
 `.gitea/workflows/build.yml` compile le `.scr` et l'installeur sur un runner Linux :
-- **push sur `main` et pull requests** : les binaires sont disponibles en artefact du run ;
-- **tag `vX.Y.Z`** : la version `X.Y.Z` est appliquée au `.scr` et à l'installeur, puis
-  les deux fichiers sont publiés dans une release Gitea.
+- **push sur `main` et pull requests** : l'installeur est disponible en artefact du run ;
+- **tag `vX.Y.Z`** : la version `X.Y.Z` est appliquée, puis l'installeur est publié dans
+  une release Gitea. Le `.scr` n'est pas livré à part, puisque l'installeur le contient.
 
 ```sh
 git tag v1.1.0 && git push origin v1.1.0
