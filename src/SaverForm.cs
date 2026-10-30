@@ -82,6 +82,11 @@ namespace GorgyLedi
                 lastState = state;
                 Invalidate();
             }
+
+            // Réarme le timer juste après la prochaine demi-seconde : les secondes et le
+            // clignotement des deux-points changent ainsi ensemble, sans la dérive d'un
+            // intervalle fixe (le Timer WinForms n'a qu'une résolution d'environ 15 ms).
+            timer.Interval = 500 - now.Millisecond % 500 + 10;
         }
 
         bool ColonOn(DateTime now)
